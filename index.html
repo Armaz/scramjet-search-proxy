@@ -1,59 +1,93 @@
 <!doctype html>
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Scramjet Search</title>
-		<link rel="stylesheet" href="/index.css" />
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scramjet Search</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #0f172a, #111827 50%, #1e293b);
+        font-family: Arial, Helvetica, sans-serif;
+        color: white;
+      }
+      .box {
+        width: min(700px, 92vw);
+        text-align: center;
+        padding: 48px 28px;
+        border-radius: 20px;
+        background: rgba(15, 23, 42, 0.75);
+        box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2.4rem, 5vw, 4rem);
+      }
+      p {
+        margin: 0 0 28px;
+        color: #dbeafe;
+        font-size: 1.08rem;
+      }
+      form {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      input {
+        flex: 1;
+        max-width: 480px;
+        padding: 18px 20px;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 999px;
+        font-size: 1rem;
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+      }
+      input::placeholder { color: rgba(255,255,255,0.7); }
+      button {
+        padding: 18px 28px;
+        border: none;
+        border-radius: 999px;
+        background: #22c55e;
+        color: #04130a;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      button:hover { filter: brightness(1.05); }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h1>Scramjet</h1>
+      <p>Search with Scramjet + DuckDuckGo</p>
 
-		<script src="/bootstrap-init.js"></script>
-	</head>
-	<body>
-		<div title="Scramjet Logo" class="flex-center logo-wrapper header-center">
-			<h1>Scramjet</h1>
-		</div>
-		<div class="flex-center desc left-margin">
-			<p>
-				Scramjet is a versatile web proxy designed to bypass internet censorship.
-				Search anything below and Scramjet will proxy it for you.
-			</p>
-		</div>
+      <form id="searchForm">
+        <input id="query" type="text" placeholder="Search the web..." autocomplete="off" />
+        <button type="submit">Search</button>
+      </form>
+    </div>
 
-		<form id="sj-form" class="flex-center">
-			<input
-				id="sj-search-engine"
-				value="https://www.google.com/search?q=%s"
-				type="hidden"
-			/>
-			<input id="sj-address" type="text" placeholder="Search the web freely" />
-		</form>
-		<div class="desc left-margin">
-			<p id="sj-error"></p>
-			<pre id="sj-error-code"></pre>
-		</div>
-		<footer>
-			<div>
-				<a
-					title="The Mercury Workshop GitHub organization"
-					href="https://github.com/MercuryWorkshop"
-					>Mercury Workshop</a
-				>
-				<a
-					title="Scramjet Repository"
-					href="https://github.com/MercuryWorkshop/scramjet"
-					>GitHub</a
-				>
-			</div>
-			<div>
-				<span>Scramjet &copy; MW 2025</span>
-			</div>
-		</footer>
+    <script>
+      const form = document.getElementById('searchForm');
+      const input = document.getElementById('query');
 
-		<div id="sj-frame-wrapper">
-			<p id="sj-frame-url"></p>
-			<iframe id="sj-frame"></iframe>
-		</div>
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (!q) return;
 
-		<script src="/index.js"></script>
-	</body>
+        const search = 'scramjet ' + q;
+        const url = 'https://duckduckgo.com/?q=' + encodeURIComponent(search);
+        window.location.href = url;
+      });
+
+      input.focus();
+    </script>
+  </body>
 </html>
