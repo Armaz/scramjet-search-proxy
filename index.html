@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Scramjet Search</title>
+		<link rel="stylesheet" href="/index.css" />
+
+		<script src="/bootstrap-init.js"></script>
+	</head>
+	<body>
+		<div title="Scramjet Logo" class="flex-center logo-wrapper header-center">
+			<h1>Scramjet</h1>
+		</div>
+		<div class="flex-center desc left-margin">
+			<p>
+				Scramjet is a versatile web proxy designed to bypass internet censorship.
+				Search anything below and Scramjet will proxy it for you.
+			</p>
+		</div>
+
+		<form id="sj-form" class="flex-center">
+			<input
+				id="sj-search-engine"
+				value="https://www.google.com/search?q=%s"
+				type="hidden"
+			/>
+			<input id="sj-address" type="text" placeholder="Search the web freely" />
+		</form>
+		<div class="desc left-margin">
+			<p id="sj-error"></p>
+			<pre id="sj-error-code"></pre>
+		</div>
+		<footer>
+			<div>
+				<a
+					title="The Mercury Workshop GitHub organization"
+					href="https://github.com/MercuryWorkshop"
+					>Mercury Workshop</a
+				>
+				<a
+					title="Scramjet Repository"
+					href="https://github.com/MercuryWorkshop/scramjet"
+					>GitHub</a
+				>
+			</div>
+			<div>
+				<span>Scramjet &copy; MW 2025</span>
+			</div>
+		</footer>
+
+		<div id="sj-frame-wrapper">
+			<p id="sj-frame-url"></p>
+			<iframe id="sj-frame"></iframe>
+		</div>
+
+		<script src="/index.js"></script>
+	</body>
+</html>
