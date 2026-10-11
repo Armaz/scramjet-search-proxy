@@ -1,1 +1,1 @@
-// Scramjet logic is in index.html
+// All logic is contained in index.html
