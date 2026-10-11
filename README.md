@@ -1,68 +1,100 @@
-# Scramjet Search Proxy
+# Scramjet Search Proxy - Complete Working Setup
 
-A complete web search proxy using Scramjet + Wisp backend with WebSocket support.
+A full-featured search proxy using Scramjet + Wisp WebSocket backend with real proxied iframe results.
 
-## Features
+## Quick Start
 
-- Full Scramjet proxy integration
-- Wisp protocol WebSocket backend
-- DuckDuckGo search through Scramjet
-- Real-time search results in iframe
-- Fully encrypted traffic
+### Option 1: Clone Scramjet & Use This
 
-## Setup
+```bash
+# Clone Scramjet repo
+git clone --recursive https://github.com/MercuryWorkshop/scramjet.git
+cd scramjet
 
-### 1. Install Dependencies
+# Install dependencies
+pnpm install
+
+# Copy our files into the demo public folder
+cp path/to/index.html packages/demo/public/
+cp path/to/styles.css packages/demo/public/
+
+# Run Scramjet dev server
+pnpm dev
+```
+
+Then open: `http://localhost:4141`
+
+This will:
+- Start Wisp WebSocket server on `ws://localhost:4142/`
+- Serve the search UI on `http://localhost:4141`
+- Proxy DuckDuckGo through Scramjet in an iframe
+
+### Option 2: Use Our Standalone Backend
 
 ```bash
 npm install
-```
-
-### 2. Start the Wisp Backend Server
-
-```bash
 npm run server
 ```
 
-This will:
-- Start the Wisp WebSocket server on port 4142
-- Serve the frontend on port 4141
-- Load all Scramjet bundles
-
-### 3. Open in Browser
-
-Go to `http://localhost:4141` and search!
+Then open: `http://localhost:4141`
 
 ## How It Works
 
-1. **Frontend** (`index.html`) - Search UI that connects to Wisp
-2. **Wisp Backend** (`server.js`) - WebSocket proxy server
-3. **Scramjet Integration** - Real-time proxying of DuckDuckGo
-4. **Encrypted Traffic** - All requests go through Wisp protocol
+1. **Frontend** - `index.html` with search bar
+2. **Wisp Backend** - WebSocket proxy on port 4142
+3. **Scramjet Controller** - Real-time iframe proxying
+4. **Results** - DuckDuckGo search displayed inside proxied frame
 
-## Project Structure
+## Key Features
 
-```
-.
-├── server.js           # Wisp backend + Express server
-├── index.html          # Frontend search interface
-├── package.json        # Dependencies
-└── README.md
-```
+✅ Full Scramjet integration
+✅ Wisp WebSocket protocol
+✅ Real proxied iframe results
+✅ LibCurl transport for encrypted traffic
+✅ Live URL watching
+✅ HTTP caching plugin
 
-## Deployment
-
-For production:
+## Production Deployment
 
 ```bash
 PORT=8080 WISP_PORT=8081 npm run server
 ```
 
-Then update the frontend to point to your domain:
-
+Update Wisp URL in HTML for your domain:
 ```javascript
-const WISP_URL = 'wss://your-domain.com:8081/'; // Use wss:// for HTTPS
+const WISP_URL = 'wss://your-domain.com:8081/';
 ```
+
+## File Structure
+
+```
+.
+├── server.js              # Wisp + Express backend
+├── index.html             # Search UI with Scramjet integration
+├── styles.css             # Styling
+├── package.json           # Dependencies
+└── README.md
+```
+
+## Dependencies
+
+- `express` - Web server
+- `@mercuryworkshop/wisp-js` - WebSocket proxy protocol
+- `@mercuryworkshop/scramjet` - Client bundle
+- `@mercuryworkshop/scramjet-controller` - Frame controller
+- `@mercuryworkshop/libcurl-transport` - Transport layer
+
+## Troubleshooting
+
+**Blank iframe?**
+- Check browser console for errors
+- Verify Wisp server is running on port 4142
+- Ensure Scramjet bundles are loaded
+
+**Connection refused?**
+- Wisp URL may be wrong
+- Check that server is running: `npm run server`
+- Verify ports 4141 (frontend) and 4142 (wisp) are available
 
 ## License
 

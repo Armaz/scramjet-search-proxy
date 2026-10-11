@@ -3,187 +3,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scramjet Search</title>
+    <title>Scramjet Search - Wisp Proxy</title>
+    
+    <!-- Scramjet Bundles -->
     <script src="/scramjet/scramjet.js"></script>
     <script src="/controller/controller.api.js"></script>
     <script src="/libcurl/index.js"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .navbar {
-            background: rgba(0,0,0,0.4);
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            backdrop-filter: blur(10px);
-        }
-        .navbar h1 {
-            font-size: 1.4rem;
-            flex-shrink: 0;
-            font-weight: 700;
-        }
-        .navbar-search {
-            display: flex;
-            gap: 8px;
-            flex: 1;
-            max-width: 450px;
-        }
-        .navbar-search input {
-            flex: 1;
-            padding: 9px 14px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 20px;
-            background: rgba(255,255,255,0.08);
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .navbar-search input:focus {
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.3);
-        }
-        .navbar-search input::placeholder { color: rgba(255,255,255,0.5); }
-        .navbar-search button {
-            padding: 9px 18px;
-            border: none;
-            border-radius: 20px;
-            background: #22c55e;
-            color: #000;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-        .navbar-search button:hover {
-            filter: brightness(0.9);
-        }
-        .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 20px;
-            text-align: center;
-            flex: 1;
-        }
-        .hero h2 {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #22c55e, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-        }
-        .hero p {
-            font-size: 1.15rem;
-            color: rgba(255,255,255,0.75);
-            margin-bottom: 50px;
-        }
-        .search-box {
-            display: flex;
-            gap: 12px;
-            max-width: 620px;
-            width: 100%;
-        }
-        .search-box input {
-            flex: 1;
-            padding: 16px 22px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 999px;
-            background: rgba(255,255,255,0.08);
-            color: white;
-            font-size: 1.05rem;
-            outline: none;
-            transition: all 0.3s;
-        }
-        .search-box input:focus {
-            background: rgba(255,255,255,0.14);
-            border-color: rgba(255,255,255,0.4);
-            box-shadow: 0 0 20px rgba(34,197,94,0.2);
-        }
-        .search-box input::placeholder { color: rgba(255,255,255,0.5); }
-        .search-box button {
-            padding: 16px 40px;
-            border: none;
-            border-radius: 999px;
-            background: #22c55e;
-            color: #000;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1.05rem;
-            transition: all 0.3s;
-        }
-        .search-box button:hover {
-            filter: brightness(0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(34,197,94,0.3);
-        }
-        .results-container {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-        #proxyFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-        }
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            display: none;
-            z-index: 100;
-            background: rgba(0,0,0,0.7);
-            padding: 40px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        }
-        .loading.show { display: block; }
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(34, 197, 94, 0.2);
-            border-top: 4px solid #22c55e;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .error {
-            color: #ff6b6b;
-            padding: 20px;
-            margin: 20px;
-            background: rgba(255,107,107,0.1);
-            border-radius: 8px;
-            border-left: 4px solid #ff6b6b;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <div class="navbar">
-        <h1>🚀 Scramjet</h1>
+        <h1>🚀 Scramjet Search</h1>
         <div class="navbar-search">
             <input id="navSearchInput" type="text" placeholder="Quick search..." />
             <button onclick="searchFromNav()">Go</button>
@@ -193,7 +24,7 @@
     <div class="container">
         <div class="hero" id="hero">
             <h2>Scramjet Search</h2>
-            <p>Browse the web freely with Scramjet + DuckDuckGo</p>
+            <p>Browse DuckDuckGo freely through Scramjet + Wisp proxy</p>
             <div class="search-box">
                 <input id="searchInput" type="text" placeholder="Search anything..." autocomplete="off" />
                 <button onclick="search()">Search</button>
@@ -201,6 +32,10 @@
         </div>
 
         <div class="results-container" id="resultsContainer" style="display: none;">
+            <div class="results-header">
+                <button onclick="backToHome()" class="back-btn">← Back</button>
+                <span id="searchQuery" class="search-query"></span>
+            </div>
             <iframe id="proxyFrame"></iframe>
         </div>
 
@@ -213,46 +48,98 @@
     </div>
 
     <script>
-        let controller;
-        let frame;
+        let controller = null;
+        let frame = null;
+        let isInitializing = false;
 
-        // Detect protocol (http/https => ws/wss)
+        // Auto-detect Wisp URL
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const WISP_URL = `${protocol}//${window.location.hostname}:${window.location.port === '4141' ? '4142' : window.location.port || (protocol === 'wss:' ? '443' : '80')}/`;
+        const hostname = window.location.hostname;
+        const port = window.location.port;
+        const wispPort = port === '4141' ? '4142' : (port || (protocol === 'wss:' ? '443' : '80'));
+        const WISP_URL = `${protocol}//${hostname}:${wispPort}/`;
 
-        console.log('Wisp URL:', WISP_URL);
+        console.log('🔌 Wisp URL:', WISP_URL);
 
         async function initScramjet() {
-            if (controller) return;
+            if (controller) {
+                console.log('✅ Scramjet already initialized');
+                return;
+            }
             
+            if (isInitializing) {
+                console.log('⏳ Scramjet initialization in progress...');
+                return;
+            }
+            
+            isInitializing = true;
+            showLoading(true);
+            showError('');
+
             try {
-                showError('');
-                console.log('Initializing Scramjet with Wisp...');
+                console.log('🚀 Initializing Scramjet...');
                 
+                // Wait for all Scramjet bundles to load
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                if (!window.LibcurlTransport) {
+                    throw new Error('LibcurlTransport not loaded');
+                }
+                if (!window.$scramjetController) {
+                    throw new Error('Scramjet Controller not loaded');
+                }
+                if (!window.$scramjetUtils) {
+                    throw new Error('Scramjet Utils not loaded');
+                }
+
                 // Create LibCurl transport with Wisp
                 const LibcurlClient = window.LibcurlTransport.LibcurlClient;
-                const transport = new LibcurlClient({ wisp: WISP_URL });
+                const transport = new LibcurlClient({ 
+                    wisp: WISP_URL,
+                    localIp: true
+                });
                 
+                console.log('✅ Transport created');
+
                 // Create Scramjet controller
                 const Controller = window.$scramjetController.Controller;
                 controller = new Controller({
                     transport: transport,
                 });
 
+                console.log('✅ Controller created');
+
+                // Wait for controller to be ready
+                await controller.wait();
+                
+                console.log('✅ Controller ready');
+
                 // Create frame for iframe
-                frame = controller.createFrame(document.getElementById('proxyFrame'), {
+                const frameElement = document.getElementById('proxyFrame');
+                frame = controller.createFrame(frameElement, {
                     plugins: [
                         new window.$scramjetUtils.HttpCachePlugin(),
                         new window.$scramjetUtils.UrlWatcherPlugin((url) => {
-                            console.log('Proxying:', url);
+                            console.log('📍 Proxying:', url);
+                            document.getElementById('searchQuery').textContent = `Proxying: ${url}`;
                         }),
+                        new window.$scramjetUtils.CatchEscapedLinksPlugin((url) => {
+                            return new URL(`/?goto=${encodeURIComponent(url.href)}`, location.origin);
+                        })
                     ],
                 });
 
-                console.log('✅ Scramjet initialized!');
+                console.log('✅ Frame created');
+                console.log('✅ Scramjet fully initialized!');
+                showLoading(false);
+                isInitializing = false;
             } catch (e) {
-                console.error('Scramjet init error:', e);
+                console.error('❌ Scramjet init error:', e);
                 showError('Failed to initialize Scramjet: ' + e.message);
+                showLoading(false);
+                isInitializing = false;
+                controller = null;
+                frame = null;
                 throw e;
             }
         }
@@ -272,8 +159,13 @@
         }
 
         function showResults(show) {
-            document.getElementById('resultsContainer').style.display = show ? 'flex' : 'none';
+            document.getElementById('resultsContainer').style.display = show ? 'block' : 'none';
             document.getElementById('hero').style.display = show ? 'none' : 'flex';
+        }
+
+        function backToHome() {
+            showResults(false);
+            document.getElementById('searchInput').focus();
         }
 
         function search() {
@@ -294,24 +186,31 @@
             showLoading(true);
             showResults(true);
             showError('');
+            document.getElementById('searchQuery').textContent = `Searching: ${query}`;
 
             try {
                 // Initialize Scramjet if not already done
                 await initScramjet();
 
+                if (!frame) {
+                    throw new Error('Frame not initialized');
+                }
+
                 // Build DuckDuckGo search URL
                 const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
                 
-                console.log('Loading search:', searchUrl);
+                console.log('🔍 Loading search:', searchUrl);
                 
                 // Navigate through Scramjet proxy
                 await frame.go(searchUrl);
                 
+                console.log('✅ Search loaded');
                 showLoading(false);
             } catch (e) {
-                console.error('Search error:', e);
+                console.error('❌ Search error:', e);
                 showError('Error loading search: ' + e.message);
                 showLoading(false);
+                showResults(false);
             }
         }
 
@@ -328,11 +227,14 @@
         const params = new URLSearchParams(window.location.search);
         const goto = params.get('goto');
         if (goto) {
+            console.log('🔗 Got redirect:', goto);
             document.getElementById('searchInput').value = goto;
-            setTimeout(() => search(), 500);
+            setTimeout(() => search(), 1000);
         }
 
         document.getElementById('searchInput').focus();
+        
+        console.log('🎯 Scramjet Search loaded');
     </script>
 </body>
 </html>
