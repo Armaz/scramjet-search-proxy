@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scramjet Search</title>
+    <script src="/scramjet/scramjet.js"></script>
+    <script src="/controller/controller.api.js"></script>
+    <script src="/libcurl/index.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -168,6 +171,14 @@
             margin: 0 auto 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .error {
+            color: #ff6b6b;
+            padding: 20px;
+            margin: 20px;
+            background: rgba(255,107,107,0.1);
+            border-radius: 8px;
+            border-left: 4px solid #ff6b6b;
+        }
     </style>
 </head>
 <body>
@@ -182,7 +193,7 @@
     <div class="container">
         <div class="hero" id="hero">
             <h2>Scramjet Search</h2>
-            <p>Browse DuckDuckGo freely with Scramjet proxy</p>
+            <p>Browse the web freely with Scramjet + DuckDuckGo</p>
             <div class="search-box">
                 <input id="searchInput" type="text" placeholder="Search anything..." autocomplete="off" />
                 <button onclick="search()">Search</button>
@@ -195,17 +206,65 @@
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Loading search results...</p>
+            <p>Proxying search through Scramjet...</p>
         </div>
+
+        <div class="error" id="error" style="display: none;"></div>
     </div>
 
     <script>
-        // Your Wisp backend server URL (change this to your actual server)
-        const WISP_BACKEND = 'https://your-wisp-server.com';
+        let controller;
+        let frame;
 
-        function encodeUrl(url) {
-            // Use base64 encoding for the URL
-            return btoa(url);
+        // Detect protocol (http/https => ws/wss)
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const WISP_URL = `${protocol}//${window.location.hostname}:${window.location.port === '4141' ? '4142' : window.location.port || (protocol === 'wss:' ? '443' : '80')}/`;
+
+        console.log('Wisp URL:', WISP_URL);
+
+        async function initScramjet() {
+            if (controller) return;
+            
+            try {
+                showError('');
+                console.log('Initializing Scramjet with Wisp...');
+                
+                // Create LibCurl transport with Wisp
+                const LibcurlClient = window.LibcurlTransport.LibcurlClient;
+                const transport = new LibcurlClient({ wisp: WISP_URL });
+                
+                // Create Scramjet controller
+                const Controller = window.$scramjetController.Controller;
+                controller = new Controller({
+                    transport: transport,
+                });
+
+                // Create frame for iframe
+                frame = controller.createFrame(document.getElementById('proxyFrame'), {
+                    plugins: [
+                        new window.$scramjetUtils.HttpCachePlugin(),
+                        new window.$scramjetUtils.UrlWatcherPlugin((url) => {
+                            console.log('Proxying:', url);
+                        }),
+                    ],
+                });
+
+                console.log('✅ Scramjet initialized!');
+            } catch (e) {
+                console.error('Scramjet init error:', e);
+                showError('Failed to initialize Scramjet: ' + e.message);
+                throw e;
+            }
+        }
+
+        function showError(msg) {
+            const errorEl = document.getElementById('error');
+            if (msg) {
+                errorEl.textContent = msg;
+                errorEl.style.display = 'block';
+            } else {
+                errorEl.style.display = 'none';
+            }
         }
 
         function showLoading(show) {
@@ -220,7 +279,6 @@
         function search() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
-
             performSearch(query);
         }
 
@@ -232,34 +290,27 @@
             }
         }
 
-        function performSearch(query) {
+        async function performSearch(query) {
             showLoading(true);
             showResults(true);
+            showError('');
 
             try {
+                // Initialize Scramjet if not already done
+                await initScramjet();
+
                 // Build DuckDuckGo search URL
                 const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
                 
-                // Encode the URL in base64 for the Wisp proxy
-                const encodedUrl = encodeUrl(searchUrl);
+                console.log('Loading search:', searchUrl);
                 
-                // Construct the proxied URL
-                // Format: https://wisp-server.com/?uri=base64(target-url)
-                const proxiedUrl = `${WISP_BACKEND}/?uri=${encodedUrl}`;
+                // Navigate through Scramjet proxy
+                await frame.go(searchUrl);
                 
-                console.log('Proxying to:', proxiedUrl);
-                
-                const frame = document.getElementById('proxyFrame');
-                frame.onload = () => {
-                    showLoading(false);
-                };
-                frame.onerror = () => {
-                    showLoading(false);
-                    console.error('Failed to load proxy frame');
-                };
-                frame.src = proxiedUrl;
+                showLoading(false);
             } catch (e) {
                 console.error('Search error:', e);
+                showError('Error loading search: ' + e.message);
                 showLoading(false);
             }
         }
@@ -278,7 +329,7 @@
         const goto = params.get('goto');
         if (goto) {
             document.getElementById('searchInput').value = goto;
-            search();
+            setTimeout(() => search(), 500);
         }
 
         document.getElementById('searchInput').focus();

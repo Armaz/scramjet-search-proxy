@@ -1,25 +1,69 @@
 # Scramjet Search Proxy
 
-A simple search interface that proxies DuckDuckGo searches through a Wisp backend server.
+A complete web search proxy using Scramjet + Wisp backend with WebSocket support.
+
+## Features
+
+- Full Scramjet proxy integration
+- Wisp protocol WebSocket backend
+- DuckDuckGo search through Scramjet
+- Real-time search results in iframe
+- Fully encrypted traffic
 
 ## Setup
 
-1. Update `WISP_BACKEND` in `index.html` to point to your Wisp server
-2. Deploy this to your server
-3. When users search, queries are sent through the Wisp proxy using base64-encoded URLs
+### 1. Install Dependencies
 
-## How it works
+```bash
+npm install
+```
 
-- User enters a search query
-- The app encodes the DuckDuckGo search URL in base64
-- Sends to Wisp backend: `https://your-wisp-server.com/?uri=base64(duckduckgo-url)`
-- Wisp proxies the request and returns the result in an iframe
-- Search results display on the page
+### 2. Start the Wisp Backend Server
 
-## Wisp Backend URL Format
+```bash
+npm run server
+```
 
-Your Wisp server should accept:
-- `?uri=` - base64 encoded target URL
-- Returns the proxied content for iframe embedding
+This will:
+- Start the Wisp WebSocket server on port 4142
+- Serve the frontend on port 4141
+- Load all Scramjet bundles
 
-Example: `https://your-wisp-server.com/?uri=aHR0cHM6Ly9kdWNrZHVja2dvLmNvbS8/cT1zZWFyY2g=`
+### 3. Open in Browser
+
+Go to `http://localhost:4141` and search!
+
+## How It Works
+
+1. **Frontend** (`index.html`) - Search UI that connects to Wisp
+2. **Wisp Backend** (`server.js`) - WebSocket proxy server
+3. **Scramjet Integration** - Real-time proxying of DuckDuckGo
+4. **Encrypted Traffic** - All requests go through Wisp protocol
+
+## Project Structure
+
+```
+.
+├── server.js           # Wisp backend + Express server
+├── index.html          # Frontend search interface
+├── package.json        # Dependencies
+└── README.md
+```
+
+## Deployment
+
+For production:
+
+```bash
+PORT=8080 WISP_PORT=8081 npm run server
+```
+
+Then update the frontend to point to your domain:
+
+```javascript
+const WISP_URL = 'wss://your-domain.com:8081/'; // Use wss:// for HTTPS
+```
+
+## License
+
+GNU AFFERO GENERAL PUBLIC LICENSE v3
